@@ -1,4 +1,4 @@
-# Gerenciador de Tarefas — Equipe Svelteam
+# Svelteam
 
 Desenvolvimento Frontend · 2026.2 · Profª Marianne Lacerda Dutra Theodoro
 
