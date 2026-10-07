@@ -7,6 +7,7 @@ Framework: Svelte 5 (SvelteKit) com TypeScript
 ## Integrantes
 
 - Arthur Gabriel Monteiro Barreiras
+- Durval Victor Castro Alves
 - Marcus Tavares Pires
 - Matheus Almeida Cirqueira
 - Peutry de Lima Silva
