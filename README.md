@@ -13,26 +13,23 @@ Framework: Svelte 5 (SvelteKit) com TypeScript
 
 ## Como rodar
 
-Requisito: Node.js 24 ou superior (`node -v`).
+Requisito: Node.js 24 ou superior. Cada marco fica numa pasta própria.
 
 ```bash
+cd marco-1
 npm install
 npm run dev
 ```
 
-A aplicação abre em http://localhost:5173.
+Em outro terminal, dentro da mesma pasta:
 
-Em outro terminal, suba a API local:
-DD
 ```bash
 npx json-server db.json
 ```
 
-A API fica em http://localhost:3000 (`/projetos` e `/tarefas`).
-
 ## Restaurar os dados originais
 
-O json-server grava no `db.json`. Para voltar ao estado inicial:
+O json-server grava no `db.json`. Para voltar ao estado inicial, dentro da pasta do marco:
 
 ```bash
 cp db.seed.json db.json
@@ -41,11 +38,9 @@ cp db.seed.json db.json
 ## Estrutura
 
 ```
-├── db.json           dados da API (json-server)
-├── db.seed.json      cópia intacta do db.json
-├── src/
-│   ├── tipos.ts      contrato de dados (Status, Prioridade, Projeto, Tarefa)
-│   └── routes/
-│       └── +page.svelte
-└── package.json
-```
+svelteam/
+├── README.md
+└── marco-1/
+    ├── db.json           dados da API (json-server)
+    ├── db.seed.json      cópia intacta do db.json
+    ├──
