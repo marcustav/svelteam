@@ -5,7 +5,6 @@
 
 	let { children }: LayoutProps = $props()
 
-	// Marca a aba da seção atual
 	let emTarefas = $derived(page.url.pathname === '/' || page.url.pathname.startsWith('/tarefas'))
 	let emProjetos = $derived(page.url.pathname.startsWith('/projetos'))
 </script>
@@ -16,168 +15,161 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 	<link
 		rel="stylesheet"
-		href="https://fonts.googleapis.com/css2?family=Recursive:wght,CASL@300..900,0..1&display=swap"
+		href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Work+Sans:wght@400;600&display=swap"
 	/>
 </svelte:head>
 
 <header>
-	<a class="marca" href="/">Svelteam</a>
-	<p class="subtitulo">Gerenciador de tarefas acadêmicas</p>
+	<div>
+		<a class="marca" href="/">Svelteam</a>
+		<p class="subtitulo">Gerenciador de tarefas acadêmicas</p>
+	</div>
 
-	<!-- Abas de fichário: a aba atual se encaixa na folha de baixo -->
 	<nav aria-label="Principal">
-		<a class="aba aba-tarefas" href="/" aria-current={emTarefas ? 'page' : undefined}>Tarefas</a>
-		<a class="aba aba-projetos" href="/projetos" aria-current={emProjetos ? 'page' : undefined}
-			>Projetos</a
-		>
+		<a href="/" aria-current={emTarefas ? 'page' : undefined}>Tarefas</a>
+		<a href="/projetos" aria-current={emProjetos ? 'page' : undefined}>Projetos</a>
 	</nav>
 </header>
 
+<!-- folha de exercícios presa na lousa, com moldura de madeira -->
 <main>
 	{@render children()}
 </main>
 
+<div class="bandeja" aria-hidden="true">
+	<span class="giz giz-branco"></span>
+	<span class="giz giz-amarelo"></span>
+	<span class="apagador"></span>
+</div>
+
 <style>
-	/* ---------- Tokens do tema "caderno" ---------- */
 	:global(:root) {
-		--papel: #f7f9fb;
-		--quadricula: #dfe8f1;
-		--folha: #ffffff;
-		--pauta: #e4edf7;
-		--margem: #e2574c;
-		--grafite: #23272f;
-		--grafite-suave: #5a6170;
-		--tinta: #2340a0;
-
-		/* marca-texto */
-		--mt-amarelo: #ffe766;
-		--mt-laranja: #ffc98b;
-		--mt-rosa: #ffb7d5;
-		--mt-verde: #a6edb1;
-
-		--fonte: 'Recursive', system-ui, sans-serif;
+		--lousa: #2f4a3a;
+		--giz: #f2f0e6;
+		--giz-amarelo: #f4d35e;
+		--madeira: #8b5e3c;
+		--madeira-escura: #6a4429;
 	}
-
 	:global(body) {
 		margin: 0;
-		color: var(--grafite);
-		font-family: var(--fonte);
-		font-variation-settings: 'CASL' 0;
-		line-height: 1.5;
-		/* papel quadriculado */
-		background-color: var(--papel);
+		color: #2b2b2b;
+		font-family: 'Work Sans', system-ui, sans-serif;
+		/* lousa com manchas de giz apagado */
+		background-color: var(--lousa);
 		background-image:
-			linear-gradient(var(--quadricula) 1px, transparent 1px),
-			linear-gradient(90deg, var(--quadricula) 1px, transparent 1px);
-		background-size: 24px 24px;
+			radial-gradient(ellipse 60% 30% at 20% 20%, rgba(255, 255, 255, 0.05), transparent),
+			radial-gradient(ellipse 50% 25% at 80% 70%, rgba(255, 255, 255, 0.04), transparent),
+			radial-gradient(ellipse 40% 20% at 60% 10%, rgba(255, 255, 255, 0.03), transparent);
+		min-height: 100vh;
 	}
-
-	/* títulos com o eixo "casual" da Recursive: parece escrito à mão, mas legível */
 	:global(h1, h2, h3) {
-		font-variation-settings: 'CASL' 1;
-		line-height: 1.15;
-	}
-	:global(h1) {
-		font-size: 2.25rem;
-		font-weight: 800;
-		margin: 0 0 1.5rem;
-	}
-
-	:global(a) {
-		color: var(--tinta);
+		font-family: 'Kalam', 'Comic Sans MS', cursive;
 	}
 	:global(:focus-visible) {
-		outline: 3px solid var(--tinta);
+		outline: 3px solid var(--giz-amarelo);
 		outline-offset: 3px;
-		border-radius: 4px;
 	}
 
-	/* ---------- Cabeçalho ---------- */
 	header {
-		display: grid;
-		grid-template-columns: 1fr auto;
-		align-items: end;
-		gap: 0 2rem;
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 2rem;
 		max-width: 64rem;
 		margin: 0 auto;
-		padding: 2rem 2rem 0;
+		padding: 2rem 2rem 1.5rem;
 	}
 	.marca {
-		grid-column: 1;
-		font-size: 2rem;
-		font-weight: 900;
-		font-variation-settings: 'CASL' 1;
-		color: var(--tinta);
+		font-family: 'Kalam', cursive;
+		font-size: 2.6rem;
+		font-weight: 700;
+		color: var(--giz);
 		text-decoration: none;
+		/* efeito de giz: borda borrada */
+		text-shadow:
+			0 0 1px rgba(242, 240, 230, 0.8),
+			1px 1px 2px rgba(242, 240, 230, 0.3);
 	}
 	.subtitulo {
-		grid-column: 1;
-		margin: 0 0 1rem;
-		color: var(--grafite-suave);
+		margin: 0;
+		font-family: 'Kalam', cursive;
+		font-size: 1.1rem;
+		color: rgba(242, 240, 230, 0.75);
 	}
+
 	nav {
-		grid-column: 2;
-		grid-row: 1 / span 2;
-		align-self: end;
 		display: flex;
-		gap: 0.25rem;
+		gap: 1.5rem;
 	}
-
-	/* abas coloridas como as divisórias de um fichário */
-	.aba {
-		position: relative;
-		padding: 0.6rem 1.4rem 0.7rem;
-		border: 2px solid var(--grafite);
-		border-bottom: none;
-		border-radius: 10px 10px 0 0;
-		color: var(--grafite);
-		font-weight: 600;
+	nav a {
+		font-family: 'Kalam', cursive;
+		font-size: 1.4rem;
+		color: rgba(242, 240, 230, 0.7);
 		text-decoration: none;
+		padding-bottom: 0.15rem;
 	}
-	.aba-tarefas {
-		background: var(--mt-amarelo);
+	nav a:hover {
+		color: var(--giz);
 	}
-	.aba-projetos {
-		background: var(--mt-verde);
-	}
-	/* aba de trás: mais baixa, apoiada na borda da folha */
-	.aba:not([aria-current='page']) {
-		padding-top: 0.4rem;
-		padding-bottom: 0.4rem;
-	}
-	.aba:not([aria-current='page']):hover {
-		padding-top: 0.55rem;
-	}
-	/* aba da frente: branca e emendada na folha, cobrindo a borda */
-	.aba[aria-current='page'] {
-		top: 2px;
-		background: var(--folha);
-		z-index: 1;
+	/* seção atual sublinhada com giz amarelo */
+	nav a[aria-current='page'] {
+		color: var(--giz-amarelo);
+		border-bottom: 3px solid var(--giz-amarelo);
+		border-radius: 2px 6px 3px 8px;
 	}
 
-	/* ---------- Folha principal ---------- */
 	main {
 		max-width: 64rem;
-		margin: 0 auto 3rem;
+		margin: 0 auto;
 		padding: 2.5rem 2rem;
-		background: var(--folha);
-		border: 2px solid var(--grafite);
-		border-radius: 0 0 12px 12px;
-		box-shadow: 6px 6px 0 var(--quadricula);
+		background: #fbfaf4;
+		border: 12px solid var(--madeira);
+		border-image: linear-gradient(135deg, var(--madeira), var(--madeira-escura), var(--madeira)) 1;
+		box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+	}
+
+	/* bandeja de giz embaixo da folha */
+	.bandeja {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		max-width: calc(64rem + 24px);
+		height: 22px;
+		margin: 0 auto 3rem;
+		padding: 0 2rem;
+		background: linear-gradient(var(--madeira), var(--madeira-escura));
+		border-radius: 0 0 6px 6px;
+		box-sizing: border-box;
+	}
+	.giz {
+		width: 46px;
+		height: 9px;
+		border-radius: 4px;
+	}
+	.giz-branco {
+		background: var(--giz);
+	}
+	.giz-amarelo {
+		width: 30px;
+		background: var(--giz-amarelo);
+	}
+	.apagador {
+		margin-left: auto;
+		width: 70px;
+		height: 16px;
+		background: linear-gradient(#c9a26a 40%, #444 40%);
+		border-radius: 3px;
 	}
 
 	@media (max-width: 640px) {
 		header {
-			grid-template-columns: 1fr;
-			padding: 1.25rem 1rem 0;
-		}
-		nav {
-			grid-column: 1;
-			grid-row: auto;
+			flex-direction: column;
+			align-items: flex-start;
+			padding: 1.5rem 1rem 1rem;
 		}
 		main {
 			padding: 1.5rem 1rem;
-			border-radius: 0;
+			border-width: 8px;
 		}
 	}
 </style>

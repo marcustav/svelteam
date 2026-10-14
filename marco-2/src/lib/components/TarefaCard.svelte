@@ -28,7 +28,7 @@
 </script>
 
 <article class="cartao prioridade-{tarefa.prioridade}">
-	<h3 class="titulo">{tarefa.titulo}</h3>
+	<h3 class="titulo"><a href="/tarefas/{tarefa.id}">{tarefa.titulo}</a></h3>
 
 	<div class="etiquetas">
 		<span class="status status-{tarefa.status}">{rotulosStatus[tarefa.status]}</span>
@@ -73,6 +73,13 @@
 		margin: 0;
 		font-size: 1.05rem;
 		line-height: 1.3;
+	}
+	.titulo a {
+		color: inherit;
+		text-decoration: none;
+	}
+	.titulo a:hover {
+		text-decoration: underline;
 	}
 
 	.etiquetas {

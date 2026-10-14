@@ -1,20 +1,20 @@
 // svelteam/marco-2/src/routes/projetos/[id]/+page.ts
+import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
-import type { Projeto } from '../../../tipos';
+import { buscarProjetoComTarefas } from '../../../lib/api';
 
 export const load: PageLoad = async ({ fetch, params }) => {
-    // A propriedade params contém os parâmetros da URL. Como a pasta se chama [id], acessamos com params.id
-    const id = params.id;
-    const resposta = await fetch(`http://localhost:3000/projetos/${id}`); 
-    
-    // Se a API retornar erro (ex: projeto não existe), o SvelteKit automaticamente mostra aquela tela de 404 que criamos!
-    if (!resposta.ok) {
-        throw new Error('Projeto não encontrado');
-    }
+	// A propriedade params contém os parâmetros da URL. Como a pasta se chama [id], acessamos com params.id
+	// _embed=tarefas traz o projeto já com as tarefas dele (filtrar por projetoId volta vazio no json-server)
+	const projeto = await buscarProjetoComTarefas(params.id, fetch);
 
-    const projeto: Projeto = await resposta.json();
+	// error(404) faz o SvelteKit mostrar a página de erro com status 404.
+	// (throw new Error sempre vira erro 500)
+	if (!projeto) {
+		error(404, `Projeto ${params.id} não encontrado`);
+	}
 
-    return {
-        projeto
-    };
+	return {
+		projeto
+	};
 };
