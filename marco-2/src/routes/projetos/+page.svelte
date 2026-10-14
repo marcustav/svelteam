@@ -1,34 +1,117 @@
+<!-- svelteam/marco-2/src/routes/projetos/+page.svelte -->
 <script lang="ts">
-	import { formatarData } from '../../lib/rotulos'
-	import type { PageProps } from './$types'
+    import type { PageData } from './$types';
 
-	let { data }: PageProps = $props()
+    let { data }: { data: PageData } = $props();
 </script>
 
-<svelte:head><title>Projetos · Svelteam</title></svelte:head>
+<svelte:head>
+    <title>Lista de Projetos</title>
+</svelte:head>
 
 <main>
-	<a href="/">← Voltar para as tarefas</a>
-	<h1>Projetos</h1>
-	<ul class="lista">
-		{#each data.projetos as projeto (projeto.id)}
-			<li>
-				<a class="projeto" href="/projetos/{projeto.id}">
-					<h2>{projeto.nome}</h2>
-					<p>{projeto.descricao}</p>
-					<p class="meta">{projeto.disciplina} · criado em {formatarData(projeto.criadoEm)}</p>
-				</a>
-			</li>
-		{/each}
-	</ul>
+    <h1>Meus Projetos</h1>
+
+    <div class="grid-projetos">
+        <!-- Iterando sobre os projetos usando o id como chave -->
+        {#each data.projetos as projeto (projeto.id)}
+            <article class="cartao-projeto">
+                <div class="cabecalho">
+                    <h2>{projeto.nome}</h2>
+                    <span class="disciplina">{projeto.disciplina}</span>
+                </div>
+                
+                <p class="descricao">{projeto.descricao}</p>
+                
+                <div class="rodape">
+                    <small>Criado em: {new Date(projeto.criadoEm).toLocaleDateString('pt-BR')}</small>
+                    <a href="/projetos/{projeto.id}" class="btn-acessar">Acessar Projeto</a>
+                </div>
+            </article>
+        {:else}
+            <p>Nenhum projeto encontrado.</p>
+        {/each}
+    </div>
 </main>
 
 <style>
-	main { max-width: 64rem; margin: 2rem auto; padding: 0 1rem; font-family: system-ui, sans-serif; }
-	.lista { list-style: none; padding: 0; display: grid; gap: 1rem; }
-	.projeto { display: block; padding: 1.25rem; background: #fff; border: 1px solid #e4e0da; border-radius: 12px; color: inherit; text-decoration: none; }
-	.projeto:hover, .projeto:focus-visible { border-color: #ff6a3d; }
-	h2 { margin: 0 0 0.5rem; font-size: 1.25rem; }
-	p { margin: 0.25rem 0; }
-	.meta { font-size: 0.9rem; color: #5b5864; }
+    main {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-family: sans-serif;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 2rem;
+    }
+
+    .grid-projetos {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .cartao-projeto {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .cabecalho {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .cabecalho h2 {
+        margin: 0;
+        font-size: 1.3rem;
+        color: #2c3e50;
+    }
+
+    .disciplina {
+        background-color: #e0f2fe;
+        color: #0369a1;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    .descricao {
+        color: #555;
+        margin: 0;
+        flex-grow: 1;
+    }
+
+    .rodape {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+        border-top: 1px solid #eee;
+        padding-top: 1rem;
+    }
+
+    .btn-acessar {
+        background-color: #27ae60;
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+
+    .btn-acessar:hover {
+        background-color: #219150;
+    }
 </style>
