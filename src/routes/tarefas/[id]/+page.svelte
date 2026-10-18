@@ -1,79 +1,107 @@
 <script lang="ts">
-	import type { PageProps } from './$types'
-	import type { Status, Prioridade } from '../../../tipos'
+    import type { PageProps } from './$types'
+    import type { Status, Prioridade } from '../../../tipos'
 
-	// data vem do retorno da função load em +page.ts
-	let { data }: PageProps = $props()
-	let tarefa = $derived(data.tarefa)
+    // data vem do retorno da função load em +page.ts
+    let { data }: PageProps = $props()
+    let tarefa = $derived(data.tarefa)
 
-	// O contrato guarda os valores sem acento; aqui só traduzimos para exibir.
-	const nomeStatus: Record<Status, string> = {
-		'a-fazer': 'A fazer',
-		'em-andamento': 'Em andamento',
-		'em-revisao': 'Em revisão',
-		concluida: 'Concluída'
-	}
+    // O contrato guarda os valores sem acento; aqui só traduzimos para exibir.
+    const nomeStatus: Record<Status, string> = {
+        'a-fazer': 'A fazer',
+        'em-andamento': 'Em andamento',
+        'em-revisao': 'Em revisão',
+        concluida: 'Concluída'
+    }
 
-	const nomePrioridade: Record<Prioridade, string> = {
-		baixa: 'Baixa',
-		media: 'Média',
-		alta: 'Alta'
-	}
+    const nomePrioridade: Record<Prioridade, string> = {
+        baixa: 'Baixa',
+        media: 'Média',
+        alta: 'Alta'
+    }
 
-	// prazo é texto AAAA-MM-DD; mostramos como DD/MM/AAAA sem passar por Date
-	function formatarData(texto: string): string {
-		const [ano, mes, dia] = texto.split('-')
-		return `${dia}/${mes}/${ano}`
-	}
+    // prazo é texto AAAA-MM-DD; mostramos como DD/MM/AAAA sem passar por Date
+    function formatarData(texto: string): string {
+        const [ano, mes, dia] = texto.split('-')
+        return `${dia}/${mes}/${ano}`
+    }
 </script>
 
 <svelte:head>
-	<title>{tarefa.titulo}</title>
+    <title>{tarefa.titulo}</title>
 </svelte:head>
 
 <article>
-	<a href="/">← Voltar para a lista</a>
+    <header class="cabecalho-acoes">
+        <a href="/">← Voltar para a lista</a>
+        <a href="/tarefas/{tarefa.id}/editar" class="btn-acao">
+            ✏️ Editar Tarefa
+        </a>
+    </header>
 
-	<h1>{tarefa.titulo}</h1>
-	<p>{tarefa.descricao}</p>
+    <h1>{tarefa.titulo}</h1>
+    <p>{tarefa.descricao}</p>
 
-	<dl>
-		<dt>Status</dt>
-		<dd>{nomeStatus[tarefa.status]}</dd>
+    <dl>
+        <dt>Status</dt>
+        <dd>{nomeStatus[tarefa.status]}</dd>
 
-		<dt>Prioridade</dt>
-		<dd>{nomePrioridade[tarefa.prioridade]}</dd>
+        <dt>Prioridade</dt>
+        <dd>{nomePrioridade[tarefa.prioridade]}</dd>
 
-		<dt>Responsável</dt>
-		<dd>{tarefa.responsavel}</dd>
+        <dt>Responsável</dt>
+        <dd>{tarefa.responsavel}</dd>
 
-		<dt>Prazo</dt>
-		<dd>{formatarData(tarefa.prazo)}</dd>
+        <dt>Prazo</dt>
+        <dd>{formatarData(tarefa.prazo)}</dd>
 
-		<dt>Projeto</dt>
-		<dd><a href="/projetos/{tarefa.projetoId}">Projeto {tarefa.projetoId}</a></dd>
+        <dt>Projeto</dt>
+        <dd><a href="/projetos/{tarefa.projetoId}">Projeto {tarefa.projetoId}</a></dd>
 
-		<dt>Id</dt>
-		<dd>{tarefa.id}</dd>
-	</dl>
+        <dt>Id</dt>
+        <dd>{tarefa.id}</dd>
+    </dl>
 </article>
 
 <style>
-	article {
-		max-width: 40rem;
-		margin: 2rem auto;
-		padding: 0 1rem;
-		font-family: system-ui, sans-serif;
-	}
-	dl {
-		display: grid;
-		grid-template-columns: max-content 1fr;
-		gap: 0.5rem 1.5rem;
-	}
-	dt {
-		font-weight: 600;
-	}
-	dd {
-		margin: 0;
-	}
+    article {
+        max-width: 40rem;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        font-family: system-ui, sans-serif;
+    }
+    
+    .cabecalho-acoes {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-acao {
+        background-color: #007bff;
+        color: white;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: background-color 0.2s;
+    }
+
+    .btn-acao:hover {
+        background-color: #0056b3;
+    }
+
+    dl {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 0.5rem 1.5rem;
+    }
+    dt {
+        font-weight: 600;
+    }
+    dd {
+        margin: 0;
+    }
 </style>
