@@ -10,6 +10,7 @@ Framework: Svelte 5 (SvelteKit) com TypeScript
 - Marcus Tavares Pires
 - Matheus Almeida Cirqueira
 - Peutry de Lima Silva
+- Durval Victor Castro Alves
 
 ## Como rodar
 
