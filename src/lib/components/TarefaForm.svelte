@@ -5,7 +5,7 @@
 	Quem usa o formulário decide o que fazer com os dados (criarTarefa ou atualizarTarefa).
 -->
 <script lang="ts">
-	import { untrack } from 'svelte';
+	import { untrack, tick } from 'svelte';
 	import type { NovaTarefa, Projeto, Status, Prioridade } from '../../tipos';
 
 	interface Props {
@@ -17,6 +17,8 @@
 		// chamado ao enviar, com os dados já no formato do contrato
 		onsalvar: (dados: NovaTarefa) => void | Promise<void>;
 	}
+
+	type Campo = keyof NovaTarefa;
 
 	let { projetos, inicial = {}, textoBotao = 'Salvar', onsalvar }: Props = $props();
 
@@ -48,33 +50,99 @@
 		}))
 	);
 
+	// Item 20: status e prioridade sempre têm um valor válido pré-selecionado, por isso só os
+	// campos que podem ficar vazios entram na validação.
+	let erros = $state<Partial<Record<Campo, string>>>({});
+	let enviando = $state(false);
+	let erroGeral = $state('');
+
+	function validar(valores: NovaTarefa): Partial<Record<Campo, string>> {
+		const e: Partial<Record<Campo, string>> = {};
+		if (!valores.titulo) e.titulo = 'Informe o título da tarefa.';
+		if (!valores.descricao) e.descricao = 'Informe a descrição da tarefa.';
+		if (!valores.projetoId) e.projetoId = 'Escolha um projeto.';
+		if (!valores.responsavel) e.responsavel = 'Informe o responsável.';
+		if (!valores.prazo) e.prazo = 'Informe o prazo.';
+		return e;
+	}
+
 	async function enviar(evento: SubmitEvent) {
 		evento.preventDefault(); // não recarrega a página
+		erroGeral = '';
+
 		// $state.snapshot: entrega um objeto comum (sem a reatividade do Svelte) para a API
-		await onsalvar($state.snapshot(dados));
+		const valores: NovaTarefa = {
+			...$state.snapshot(dados),
+			titulo: dados.titulo.trim(),
+			descricao: dados.descricao.trim(),
+			responsavel: dados.responsavel.trim()
+		};
+
+		erros = validar(valores);
+		if (Object.keys(erros).length > 0) {
+			// Leva o foco para o primeiro campo com erro (ajuda quem usa só o teclado)
+			await tick();
+			document.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+			return;
+		}
+
+		enviando = true;
+		try {
+			await onsalvar(valores);
+		} catch {
+			erroGeral = 'Não foi possível salvar. Confira se a API (json-server) está rodando e tente de novo.';
+		} finally {
+			enviando = false;
+		}
 	}
 </script>
 
-<form class="formulario" onsubmit={enviar}>
+<form class="formulario" onsubmit={enviar} novalidate>
 	<div class="campo">
 		<label for="titulo">Título</label>
-		<input id="titulo" type="text" bind:value={dados.titulo} />
+		<input
+			id="titulo"
+			type="text"
+			bind:value={dados.titulo}
+			aria-invalid={erros.titulo ? 'true' : undefined}
+			aria-describedby={erros.titulo ? 'erro-titulo' : undefined}
+		/>
+		{#if erros.titulo}
+			<p class="erro" id="erro-titulo"><span aria-hidden="true">⚠</span> {erros.titulo}</p>
+		{/if}
 	</div>
 
 	<div class="campo">
 		<label for="descricao">Descrição</label>
-		<textarea id="descricao" rows="3" bind:value={dados.descricao}></textarea>
+		<textarea
+			id="descricao"
+			rows="3"
+			bind:value={dados.descricao}
+			aria-invalid={erros.descricao ? 'true' : undefined}
+			aria-describedby={erros.descricao ? 'erro-descricao' : undefined}
+		></textarea>
+		{#if erros.descricao}
+			<p class="erro" id="erro-descricao"><span aria-hidden="true">⚠</span> {erros.descricao}</p>
+		{/if}
 	</div>
 
 	<div class="campo">
 		<label for="projeto">Projeto</label>
 		<!-- opções carregadas da API -->
-		<select id="projeto" bind:value={dados.projetoId}>
+		<select
+			id="projeto"
+			bind:value={dados.projetoId}
+			aria-invalid={erros.projetoId ? 'true' : undefined}
+			aria-describedby={erros.projetoId ? 'erro-projeto' : undefined}
+		>
 			<option value="" disabled>Escolha um projeto</option>
 			{#each projetos as projeto (projeto.id)}
 				<option value={projeto.id}>{projeto.nome}</option>
 			{/each}
 		</select>
+		{#if erros.projetoId}
+			<p class="erro" id="erro-projeto"><span aria-hidden="true">⚠</span> {erros.projetoId}</p>
+		{/if}
 	</div>
 
 	<div class="linha">
@@ -100,18 +168,39 @@
 	<div class="linha">
 		<div class="campo">
 			<label for="responsavel">Responsável</label>
-			<input id="responsavel" type="text" bind:value={dados.responsavel} />
+			<input
+				id="responsavel"
+				type="text"
+				bind:value={dados.responsavel}
+				aria-invalid={erros.responsavel ? 'true' : undefined}
+				aria-describedby={erros.responsavel ? 'erro-responsavel' : undefined}
+			/>
+			{#if erros.responsavel}
+				<p class="erro" id="erro-responsavel"><span aria-hidden="true">⚠</span> {erros.responsavel}</p>
+			{/if}
 		</div>
 
 		<div class="campo">
 			<label for="prazo">Prazo</label>
 			<!-- input date já trabalha com texto AAAA-MM-DD, o mesmo formato do contrato -->
-			<input id="prazo" type="date" bind:value={dados.prazo} />
+			<input
+				id="prazo"
+				type="date"
+				bind:value={dados.prazo}
+				aria-invalid={erros.prazo ? 'true' : undefined}
+				aria-describedby={erros.prazo ? 'erro-prazo' : undefined}
+			/>
+			{#if erros.prazo}
+				<p class="erro" id="erro-prazo"><span aria-hidden="true">⚠</span> {erros.prazo}</p>
+			{/if}
 		</div>
 	</div>
 
-	<!-- Item 20 (validação) entra aqui: mensagens de erro junto a cada campo e botão bloqueado durante o envio -->
-	<button type="submit">{textoBotao}</button>
+	{#if erroGeral}
+		<p class="erro erro-geral" role="alert"><span aria-hidden="true">⚠</span> {erroGeral}</p>
+	{/if}
+
+	<button type="submit" disabled={enviando}>{enviando ? 'Salvando...' : textoBotao}</button>
 </form>
 
 <style>
@@ -152,6 +241,24 @@
 		outline-offset: 1px;
 		border-color: #2f4a3a;
 	}
+	input[aria-invalid='true'],
+	textarea[aria-invalid='true'],
+	select[aria-invalid='true'] {
+		border-color: #c0392b;
+		border-width: 2px;
+	}
+	.erro {
+		margin: 0;
+		color: #a93226;
+		font-size: 0.9rem;
+		font-weight: bold;
+	}
+	.erro-geral {
+		padding: 0.75rem 1rem;
+		background: #fdecea;
+		border: 1px solid #c0392b;
+		border-radius: 6px;
+	}
 	button {
 		align-self: flex-start;
 		padding: 0.7rem 1.4rem;
@@ -163,8 +270,12 @@
 		font-weight: 600;
 		cursor: pointer;
 	}
-	button:hover {
+	button:hover:not(:disabled) {
 		background: #24392d;
+	}
+	button:disabled {
+		background: #8a9087;
+		cursor: not-allowed;
 	}
 	@media (max-width: 560px) {
 		.linha {
