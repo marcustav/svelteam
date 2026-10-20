@@ -2,9 +2,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import type { PageData } from './$types'
-	import FormularioProjeto from '$lib/components/FormularioProjeto.svelte'
-	import { atualizarProjeto } from '$lib/api'
-	import type { NovoProjeto } from '$lib/api'
+	import FormularioProjeto from '../../../../lib/components/FormularioProjeto.svelte'
+	import { atualizarProjeto } from '../../../../lib/api'
+	import type { NovoProjeto } from '../../../../lib/api'
 
 	let { data }: { data: PageData } = $props()
 	let projeto = $derived(data.projeto)
