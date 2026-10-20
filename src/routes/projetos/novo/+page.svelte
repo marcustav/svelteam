@@ -1,9 +1,9 @@
 <!-- src/routes/projetos/novo/+page.svelte -->
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import FormularioProjeto from '$lib/components/FormularioProjeto.svelte'
-	import { criarProjeto } from '$lib/api'
-	import type { NovoProjeto } from '$lib/api'
+	import FormularioProjeto from '../../../lib/components/FormularioProjeto.svelte'
+	import { criarProjeto } from '../../../lib/api'
+	import type { NovoProjeto } from '../../../lib/api'
 
 	// Grava na API (POST) e, se deu certo, volta para a lista de projetos.
 	// Se criarProjeto falhar, o erro sobe para o formulário, que avisa o usuário.
