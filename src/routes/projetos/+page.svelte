@@ -14,6 +14,10 @@
 <div class="pagina">
 	<h1>Meus Projetos</h1>
 
+	<div class="acoes">
+		<a href="/projetos/novo" class="btn-novo">+ Novo projeto</a>
+	</div>
+
 	<div class="grid-projetos">
 		<!-- Iterando sobre os projetos usando o id como chave -->
 		{#each data.projetos as projeto (projeto.id)}
@@ -110,5 +114,26 @@
 
 	.btn-acessar:hover {
 		background-color: #219150;
+	}
+
+	.acoes {
+		display: flex;
+		justify-content: flex-end;
+		margin-bottom: 1.5rem;
+	}
+
+	.btn-novo {
+		background-color: #0284c7;
+		color: white;
+		text-decoration: none;
+		padding: 0.5rem 1rem;
+		border-radius: 4px;
+		font-weight: bold;
+		font-size: 0.95rem;
+		transition: background-color 0.2s;
+	}
+
+	.btn-novo:hover {
+		background-color: #0369a1;
 	}
 </style>
