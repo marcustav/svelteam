@@ -97,11 +97,14 @@
 	}
 </script>
 
-<form class="formulario" onsubmit={enviar} novalidate>
+<form class="formulario" onsubmit={enviar} novalidate aria-busy={enviando}>
+	<p class="dica">Todos os campos são obrigatórios.</p>
+
 	<div class="campo">
-		<label for="titulo">Título</label>
+		<label for="titulo">Título <span class="obrigatorio" aria-hidden="true">(obrigatório)</span></label>
 		<input
 			id="titulo"
+			aria-required="true"
 			type="text"
 			bind:value={dados.titulo}
 			aria-invalid={erros.titulo ? 'true' : undefined}
@@ -113,9 +116,10 @@
 	</div>
 
 	<div class="campo">
-		<label for="descricao">Descrição</label>
+		<label for="descricao">Descrição <span class="obrigatorio" aria-hidden="true">(obrigatório)</span></label>
 		<textarea
 			id="descricao"
+			aria-required="true"
 			rows="3"
 			bind:value={dados.descricao}
 			aria-invalid={erros.descricao ? 'true' : undefined}
@@ -127,10 +131,11 @@
 	</div>
 
 	<div class="campo">
-		<label for="projeto">Projeto</label>
+		<label for="projeto">Projeto <span class="obrigatorio" aria-hidden="true">(obrigatório)</span></label>
 		<!-- opções carregadas da API -->
 		<select
 			id="projeto"
+			aria-required="true"
 			bind:value={dados.projetoId}
 			aria-invalid={erros.projetoId ? 'true' : undefined}
 			aria-describedby={erros.projetoId ? 'erro-projeto' : undefined}
@@ -167,9 +172,10 @@
 
 	<div class="linha">
 		<div class="campo">
-			<label for="responsavel">Responsável</label>
+			<label for="responsavel">Responsável <span class="obrigatorio" aria-hidden="true">(obrigatório)</span></label>
 			<input
 				id="responsavel"
+				aria-required="true"
 				type="text"
 				bind:value={dados.responsavel}
 				aria-invalid={erros.responsavel ? 'true' : undefined}
@@ -181,10 +187,11 @@
 		</div>
 
 		<div class="campo">
-			<label for="prazo">Prazo</label>
+			<label for="prazo">Prazo <span class="obrigatorio" aria-hidden="true">(obrigatório)</span></label>
 			<!-- input date já trabalha com texto AAAA-MM-DD, o mesmo formato do contrato -->
 			<input
 				id="prazo"
+				aria-required="true"
 				type="date"
 				bind:value={dados.prazo}
 				aria-invalid={erros.prazo ? 'true' : undefined}
@@ -247,6 +254,15 @@
 		border-color: #c0392b;
 		border-width: 2px;
 	}
+	.obrigatorio,
+	.dica {
+		font-weight: 400;
+		font-size: 0.85rem;
+		color: #4a5260;
+	}
+	.dica {
+		margin: 0;
+	}
 	.erro {
 		margin: 0;
 		color: #a93226;
@@ -269,6 +285,10 @@
 		font: inherit;
 		font-weight: 600;
 		cursor: pointer;
+	}
+	button:focus-visible {
+		outline: 3px solid #f4d35e;
+		outline-offset: 2px;
 	}
 	button:hover:not(:disabled) {
 		background: #24392d;
