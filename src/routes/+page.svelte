@@ -1,7 +1,8 @@
-<!-- svelteam/marco-2/src/routes/+page.svelte -->
+<!-- src/routes/+page.svelte -->
 <script lang="ts">
 	import type { PageData } from './$types';
 	import TarefaCard from '../lib/components/TarefaCard.svelte';
+	import AlternarVisao from '../lib/components/AlternarVisao.svelte';
 
 	// Sintaxe moderna do Svelte 5
 	let { data }: { data: PageData } = $props();
@@ -14,6 +15,11 @@
 <!-- div em vez de main: o <main> já vem do +layout.svelte -->
 <div class="pagina">
 	<h1>Minhas Tarefas</h1>
+
+	<!-- Alterna entre as duas visões das tarefas: Lista e Quadro -->
+	<div class="visao">
+		<AlternarVisao />
+	</div>
 
 	<div class="grid-tarefas">
 		<!-- O (tarefa.id) garante que o ID seja a chave, como pedido na issue -->
@@ -31,6 +37,11 @@
 		text-align: center;
 		color: #333;
 		margin-bottom: 2rem;
+	}
+
+	.visao {
+		display: flex;
+		justify-content: center;
 	}
 
 	.grid-tarefas {

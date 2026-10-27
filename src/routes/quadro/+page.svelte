@@ -2,6 +2,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import TarefaCard from '../../lib/components/TarefaCard.svelte';
+	import AlternarVisao from '../../lib/components/AlternarVisao.svelte';
 	import { agruparPorStatus, filtrarTarefas, ROTULOS_STATUS } from '../../derivar';
 	import { filtros } from '../../lib/filtros.svelte';
 
@@ -17,6 +18,11 @@
 
 <div class="pagina">
 	<h1>Quadro de Tarefas</h1>
+
+	<!-- Alterna entre as duas visões das tarefas: Lista e Quadro -->
+	<div class="visao">
+		<AlternarVisao />
+	</div>
 
 	<div class="quadro">
 		{#each colunas as coluna (coluna.status)}
@@ -45,6 +51,11 @@
 		text-align: center;
 		color: #333;
 		margin-bottom: 2rem;
+	}
+
+	.visao {
+		display: flex;
+		justify-content: center;
 	}
 
 	.quadro {
