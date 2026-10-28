@@ -1,4 +1,4 @@
- <script lang="ts">
+<script lang="ts">
 
     import { filtros, limparFiltros } from '../filtros.svelte';
 
@@ -23,15 +23,29 @@
 
     <select bind:value={filtros.status} aria-label="Filtrar por status">
 
-        <option value="">Todos os status</option>
+        <option value="todos">Todos os status</option>
 
-        <option value="pendente">Pendente</option>
+        <option value="a-fazer">A fazer</option>
 
         <option value="em-andamento">Em Andamento</option>
 
         <option value="em-revisao">Em Revisão</option>
 
         <option value="concluida">Concluída</option>
+
+    </select>
+
+    
+
+    <select bind:value={filtros.prioridade} aria-label="Filtrar por prioridade">
+
+        <option value="todas">Todas as prioridades</option>
+
+        <option value="alta">Alta</option>
+
+        <option value="media">Média</option>
+
+        <option value="baixa">Baixa</option>
 
     </select>
 
@@ -124,4 +138,4 @@
 
     }
 
-</style> 
+</style>

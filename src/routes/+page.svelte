@@ -1,4 +1,4 @@
- <!-- svelteam/marco-2/src/routes/+page.svelte -->
+<!-- svelteam/marco-2/src/routes/+page.svelte -->
 
 <script lang="ts">
 
@@ -11,6 +11,8 @@
     import { atualizarTarefa } from '../lib/api';
 
     import TarefaCard from '../lib/components/TarefaCard.svelte';
+
+    import AlternarVisao from '../lib/components/AlternarVisao.svelte';
 
     import { filtros } from '../lib/filtros.svelte';
 
@@ -53,6 +55,15 @@
     <h1>Minhas Tarefas</h1>
 
 
+    <!-- Alterna entre as duas visões das tarefas: Lista e Quadro -->
+
+    <div class="visao">
+
+        <AlternarVisao />
+
+    </div>
+
+
     <div class="grid-tarefas">
 
         {#each tarefasFiltradas as tarefa (tarefa.id)}
@@ -83,6 +94,15 @@
     }
 
 
+    .visao {
+
+        display: flex;
+
+        justify-content: center;
+
+    }
+
+
     .grid-tarefas {
 
         display: grid;
@@ -93,4 +113,4 @@
 
     }
 
-</style> 
+</style>
