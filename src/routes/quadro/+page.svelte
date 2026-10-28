@@ -1,6 +1,9 @@
 <!-- src/routes/quadro/+page.svelte -->
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import type { PageData } from './$types';
+	import type { Status } from '../../tipos';
+	import { atualizarTarefa } from '../../lib/api';
 	import TarefaCard from '../../lib/components/TarefaCard.svelte';
 	import AlternarVisao from '../../lib/components/AlternarVisao.svelte';
 	import { agruparPorStatus, filtrarTarefas, ROTULOS_STATUS } from '../../derivar';
@@ -8,8 +11,16 @@
 
 	let { data }: { data: PageData } = $props();
 
+	// copia local: quando o status muda a gente troca a tarefa aqui e a coluna recalcula
+	let tarefas = $state(untrack(() => data.tarefas));
+
+	async function mudarStatus(id: string, status: Status) {
+		const nova = await atualizarTarefa(id, { status });
+		tarefas = tarefas.map((t) => (t.id === id ? nova : t));
+	}
+
 	// Filtra pelo estado compartilhado e agrupa nas 4 colunas fixas de status
-	let colunas = $derived(agruparPorStatus(filtrarTarefas(data.tarefas, filtros)));
+	let colunas = $derived(agruparPorStatus(filtrarTarefas(tarefas, filtros)));
 </script>
 
 <svelte:head>
@@ -36,7 +47,7 @@
 
 				<div class="cartoes">
 					{#each coluna.tarefas as tarefa (tarefa.id)}
-						<TarefaCard {tarefa} />
+						<TarefaCard {tarefa} aoMudarStatus={mudarStatus} />
 					{:else}
 						<p class="vazia">Nenhuma tarefa.</p>
 					{/each}

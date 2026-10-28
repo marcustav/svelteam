@@ -2,7 +2,13 @@
 
 <script lang="ts">
 
+    import { untrack } from 'svelte';
+
     import type { PageData } from './$types';
+
+    import type { Status } from '../tipos';
+
+    import { atualizarTarefa } from '../lib/api';
 
     import TarefaCard from '../lib/components/TarefaCard.svelte';
 
@@ -14,9 +20,23 @@
     let { data }: { data: PageData } = $props();
 
 
+    // copia local das tarefas, pra trocar so a que mudou sem recarregar tudo
+
+    let tarefas = $state(untrack(() => data.tarefas));
+
+
+    async function mudarStatus(id: string, status: Status) {
+
+        const nova = await atualizarTarefa(id, { status });
+
+        tarefas = tarefas.map((t) => (t.id === id ? nova : t));
+
+    }
+
+
     // Aplica o filtro global reativamente na lista principal
 
-    let tarefasFiltradas = $derived(filtrarTarefas(data.tarefas, filtros));
+    let tarefasFiltradas = $derived(filtrarTarefas(tarefas, filtros));
 
 </script>
 
@@ -37,7 +57,7 @@
 
         {#each tarefasFiltradas as tarefa (tarefa.id)}
 
-            <TarefaCard {tarefa} />
+            <TarefaCard {tarefa} aoMudarStatus={mudarStatus} />
 
         {:else}
 

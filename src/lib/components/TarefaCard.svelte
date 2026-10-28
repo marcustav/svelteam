@@ -3,9 +3,14 @@
 
 	interface Props {
 		tarefa: Tarefa;
+		// quem e dono da lista grava na API; sem isso o cartao so mostra o status
+		aoMudarStatus?: (id: string, status: Status) => Promise<void>;
 	}
 
-	let { tarefa }: Props = $props();
+	let { tarefa, aoMudarStatus }: Props = $props();
+
+	let salvando = $state(false);
+	let erro = $state('');
 
 	const rotulosStatus: Record<Status, string> = {
 		'a-fazer': 'A fazer',
@@ -19,6 +24,22 @@
 		media: 'Média',
 		alta: 'Alta'
 	};
+
+	async function trocarStatus(evento: Event & { currentTarget: HTMLSelectElement }) {
+		const campo = evento.currentTarget;
+		const novo = campo.value as Status;
+		erro = '';
+		salvando = true;
+		try {
+			await aoMudarStatus?.(tarefa.id, novo);
+		} catch {
+			// volta o select pro status antigo, senao ele fica mostrando um valor que nao foi salvo
+			campo.value = tarefa.status;
+			erro = 'Não foi possível salvar o status.';
+		} finally {
+			salvando = false;
+		}
+	}
 
 	// prazo vem como texto "AAAA-MM-DD"; formatamos sem criar Date para evitar erro de fuso horário
 	function formatarPrazo(prazo: string): string {
@@ -45,6 +66,25 @@
 			<dd><time datetime={tarefa.prazo}>{formatarPrazo(tarefa.prazo)}</time></dd>
 		</div>
 	</dl>
+
+	{#if aoMudarStatus}
+		<div class="mudar-status">
+			<label for="status-{tarefa.id}">Mudar status</label>
+			<select
+				id="status-{tarefa.id}"
+				value={tarefa.status}
+				onchange={trocarStatus}
+				disabled={salvando}
+			>
+				{#each Object.entries(rotulosStatus) as [valor, texto] (valor)}
+					<option value={valor}>{texto}</option>
+				{/each}
+			</select>
+			{#if erro}
+				<p class="erro" role="alert"><span aria-hidden="true">⚠</span> {erro}</p>
+			{/if}
+		</div>
+	{/if}
 </article>
 
 <style>
@@ -128,5 +168,31 @@
 	.detalhes dd {
 		margin: 0;
 		font-weight: 600;
+	}
+
+	.mudar-status {
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+		font-size: 0.85rem;
+	}
+	.mudar-status label {
+		color: #566573;
+	}
+	.mudar-status select {
+		font: inherit;
+		padding: 0.35rem 0.5rem;
+		border: 1px solid #b8bec9;
+		border-radius: 6px;
+		background: #fff;
+	}
+	.mudar-status select:focus-visible {
+		outline: 3px solid #f4d35e;
+		outline-offset: 1px;
+	}
+	.erro {
+		margin: 0;
+		color: #a93226;
+		font-weight: bold;
 	}
 </style>
