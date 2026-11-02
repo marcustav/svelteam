@@ -62,6 +62,14 @@ export function atualizarTarefa(
 	return enviar<Tarefa>('PATCH', `/tarefas/${encodeURIComponent(id)}`, dados, f)
 }
 
+// Exclusão (Marco 5): DELETE apaga a tarefa na API.
+// O json-server devolve a tarefa apagada, mas a tela não precisa dela, por isso não retorna nada.
+export async function excluirTarefa(id: string, f: Fetch = fetch): Promise<void> {
+	const caminho = `/tarefas/${encodeURIComponent(id)}`
+	const resposta = await f(`${API}${caminho}`, { method: 'DELETE' })
+	if (!resposta.ok) throw new Error(`HTTP ${resposta.status} ao excluir ${caminho}`)
+}
+
 // ---------- Projetos ----------
 
 export function listarProjetos(f: Fetch = fetch): Promise<Projeto[]> {
