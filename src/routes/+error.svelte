@@ -1,10 +1,13 @@
-<!-- svelteam/marco-2/src/routes/+error.svelte -->
 <script lang="ts">
-	// Agora importamos do $app/state
 	import { page } from '$app/state';
 
-	// 404 = endereço, tarefa ou projeto que não existe; outros códigos = falha ao carregar
 	let naoEncontrado = $derived(page.status === 404);
+	let tentandoNovamente = $state(false);
+
+	function tentarNovamente() {
+		tentandoNovamente = true;
+		window.location.reload();
+	}
 </script>
 
 <svelte:head>
@@ -21,11 +24,21 @@
 			{page.error?.message ?? 'Não encontrado'} (<strong>{page.url.pathname}</strong>).
 		</p>
 	{:else}
-		<h2>Não foi possível carregar a página.</h2>
-		<p>Confira se a API está rodando com <code>npx json-server db.json</code>.</p>
+		<h2>Não foi possível carregar os dados.</h2>
+		<p role="alert">
+			A API não respondeu. Confira se ela está rodando com
+			<code>npx.cmd json-server db.json</code> e tente novamente.
+		</p>
 	{/if}
 
-	<a href="/" class="btn-voltar">Voltar para o início</a>
+	<div class="acoes">
+		{#if !naoEncontrado}
+			<button type="button" class="btn-tentar" onclick={tentarNovamente} disabled={tentandoNovamente}>
+				{tentandoNovamente ? 'Tentando novamente…' : 'Tentar novamente'}
+			</button>
+		{/if}
+		<a href="/" class="btn-voltar">Voltar para o início</a>
+	</div>
 </div>
 
 <style>
@@ -56,17 +69,34 @@
 		margin-bottom: 2rem;
 	}
 
-	.btn-voltar {
+	.acoes {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.75rem;
+	}
+
+	.btn-voltar,
+	.btn-tentar {
+		border: 0;
 		background-color: #3498db;
 		color: white;
 		text-decoration: none;
 		padding: 0.75rem 1.5rem;
 		border-radius: 4px;
+		font: inherit;
 		font-weight: bold;
+		cursor: pointer;
 		transition: background-color 0.2s;
 	}
 
-	.btn-voltar:hover {
+	.btn-voltar:hover,
+	.btn-tentar:hover:not(:disabled) {
 		background-color: #2980b9;
+	}
+
+	.btn-tentar:disabled {
+		opacity: 0.65;
+		cursor: wait;
 	}
 </style>
