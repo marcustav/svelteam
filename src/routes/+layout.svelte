@@ -1,6 +1,6 @@
 <script lang="ts">
 	import favicon from '../lib/assets/favicon.svg'
-	import { page } from '$app/state'
+	import { navigating, page } from '$app/state'
 	import type { LayoutProps } from './$types'
 	import Filtros from '../lib/components/Filtros.svelte'
 
@@ -8,6 +8,7 @@
 
 	let emTarefas = $derived(page.url.pathname === '/' || page.url.pathname.startsWith('/tarefas') || page.url.pathname.startsWith('/quadro'))
 	let emProjetos = $derived(page.url.pathname.startsWith('/projetos'))
+	let carregando = $derived(navigating.to !== null)
 </script>
 
 <svelte:head>
@@ -34,6 +35,13 @@
 
 <!-- folha de exercícios presa na lousa, com moldura de madeira -->
 <main>
+	{#if carregando}
+		<div class="carregando" role="status" aria-live="polite">
+			<span class="indicador" aria-hidden="true"></span>
+			Carregando dados…
+		</div>
+	{/if}
+
 	{#if emTarefas}
 		<Filtros />
 	{/if}
@@ -124,6 +132,7 @@
 	}
 
 	main {
+		position: relative;
 		max-width: 64rem;
 		margin: 0 auto;
 		padding: 2.5rem 2rem;
@@ -131,6 +140,37 @@
 		border: 12px solid var(--madeira);
 		border-image: linear-gradient(135deg, var(--madeira), var(--madeira-escura), var(--madeira)) 1;
 		box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+	}
+	.carregando {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.65rem;
+		margin-bottom: 1.5rem;
+		padding: 0.85rem 1rem;
+		border: 1px solid #d8c45a;
+		border-radius: 6px;
+		background: #fff8cf;
+		color: #594b08;
+		font-weight: 600;
+	}
+	.indicador {
+		width: 1rem;
+		height: 1rem;
+		border: 3px solid rgba(89, 75, 8, 0.25);
+		border-top-color: #594b08;
+		border-radius: 50%;
+		animation: girar 0.8s linear infinite;
+	}
+	@keyframes girar {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.indicador {
+			animation: none;
+		}
 	}
 
 	/* bandeja de giz embaixo da folha */
