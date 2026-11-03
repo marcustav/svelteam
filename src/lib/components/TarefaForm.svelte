@@ -6,6 +6,7 @@
 -->
 <script lang="ts">
 	import { untrack, tick } from 'svelte';
+	import { mensagemDeErro } from '../erros';
 	import type { NovaTarefa, Projeto, Status, Prioridade } from '../../tipos';
 
 	interface Props {
@@ -55,6 +56,8 @@
 	let erros = $state<Partial<Record<Campo, string>>>({});
 	let enviando = $state(false);
 	let erroGeral = $state('');
+	// aviso de falha ao salvar: recebe o foco para quem usa teclado ou leitor de tela saber na hora
+	let avisoErro: HTMLElement | undefined = $state();
 
 	function validar(valores: NovaTarefa): Partial<Record<Campo, string>> {
 		const e: Partial<Record<Campo, string>> = {};
@@ -89,8 +92,11 @@
 		enviando = true;
 		try {
 			await onsalvar(valores);
-		} catch {
-			erroGeral = 'Não foi possível salvar. Confira se a API (json-server) está rodando e tente de novo.';
+		} catch (erro) {
+			// Falha ao salvar: `dados` não é tocado, então tudo o que a pessoa digitou continua nos campos.
+			erroGeral = mensagemDeErro(erro, 'salvar');
+			await tick();
+			avisoErro?.focus();
 		} finally {
 			enviando = false;
 		}
@@ -204,7 +210,10 @@
 	</div>
 
 	{#if erroGeral}
-		<p class="erro erro-geral" role="alert"><span aria-hidden="true">⚠</span> {erroGeral}</p>
+		<div class="erro-geral" role="alert" tabindex="-1" bind:this={avisoErro}>
+			<p class="erro"><span aria-hidden="true">⚠</span> {erroGeral}</p>
+			<p class="mantido">O que você digitou foi mantido. É só clicar em “{textoBotao}” de novo.</p>
+		</div>
 	{/if}
 
 	<button type="submit" disabled={enviando}>{enviando ? 'Salvando...' : textoBotao}</button>
@@ -274,6 +283,14 @@
 		background: #fdecea;
 		border: 1px solid #c0392b;
 		border-radius: 6px;
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+	}
+	.mantido {
+		margin: 0;
+		color: #4b5563;
+		font-size: 0.9rem;
 	}
 	button {
 		align-self: flex-start;

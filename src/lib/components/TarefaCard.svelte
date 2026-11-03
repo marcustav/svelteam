@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Tarefa, Status, Prioridade } from '../../tipos';
+	import { mensagemDeErro } from '../erros';
 
 	interface Props {
 		tarefa: Tarefa;
@@ -32,10 +33,10 @@
 		salvando = true;
 		try {
 			await aoMudarStatus?.(tarefa.id, novo);
-		} catch {
+		} catch (e) {
 			// volta o select pro status antigo, senao ele fica mostrando um valor que nao foi salvo
 			campo.value = tarefa.status;
-			erro = 'Não foi possível salvar o status.';
+			erro = mensagemDeErro(e, 'mudar o status');
 		} finally {
 			salvando = false;
 		}

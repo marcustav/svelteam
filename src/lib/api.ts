@@ -1,7 +1,12 @@
 import type { Projeto, Tarefa, NovaTarefa } from '../tipos'
+import { ErroApi } from './erros'
 
 // Endereço da API local (json-server). No Marco 6 isso vai para uma variável de ambiente.
 const API = 'http://localhost:3000'
+
+// Se a API não responder nesse tempo, desistimos e avisamos o usuário
+// (sem isso, o botão ficaria em "Salvando..." para sempre).
+const TEMPO_LIMITE_MS = 8000
 
 // Projeto com as tarefas dentro, como o json-server devolve com ?_embed=tarefas
 export type ProjetoComTarefas = Projeto & { tarefas: Tarefa[] }
@@ -13,28 +18,55 @@ export type NovoProjeto = Omit<Projeto, 'id'>
 // Recebemos ele por parâmetro; fora do load, usa o fetch normal do navegador.
 type Fetch = typeof fetch
 
+// Todas as chamadas passam por aqui. Transforma qualquer falha num ErroApi com o tipo certo
+// (rede, tempo ou http), para a tela escolher a mensagem. 404 só volta como resposta
+// quando aceitar404 = true (buscas que tratam "não encontrado" como null).
+async function requisitar(
+	caminho: string,
+	f: Fetch,
+	opcoes: RequestInit = {},
+	aceitar404 = false
+): Promise<Response> {
+	const metodo = opcoes.method ?? 'GET'
+	let resposta: Response
+	try {
+		resposta = await f(`${API}${caminho}`, {
+			...opcoes,
+			signal: AbortSignal.timeout(TEMPO_LIMITE_MS)
+		})
+	} catch (erro) {
+		// AbortSignal.timeout dispara um erro com name 'TimeoutError'; o resto é falha de rede
+		if (erro instanceof Error && erro.name === 'TimeoutError') {
+			throw new ErroApi('tempo', `Tempo esgotado em ${metodo} ${caminho}`)
+		}
+		throw new ErroApi('rede', `Sem resposta da API em ${metodo} ${caminho}`)
+	}
+
+	if (!resposta.ok && !(aceitar404 && resposta.status === 404)) {
+		throw new ErroApi('http', `HTTP ${resposta.status} em ${metodo} ${caminho}`, resposta.status)
+	}
+	return resposta
+}
+
 async function pegar<T>(caminho: string, f: Fetch): Promise<T> {
-	const resposta = await f(`${API}${caminho}`)
-	if (!resposta.ok) throw new Error(`HTTP ${resposta.status} em ${caminho}`)
+	const resposta = await requisitar(caminho, f)
 	return resposta.json() as Promise<T>
 }
 
 async function pegarOuNulo<T>(caminho: string, f: Fetch): Promise<T | null> {
-	const resposta = await f(`${API}${caminho}`)
+	const resposta = await requisitar(caminho, f, {}, true)
 	if (resposta.status === 404) return null
-	if (!resposta.ok) throw new Error(`HTTP ${resposta.status} em ${caminho}`)
 	return resposta.json() as Promise<T>
 }
 
 // Escrita (Marco 3): envia JSON com POST (criar) ou PATCH (alterar só os campos enviados)
 // e devolve o registro como a API gravou, já com o id.
 async function enviar<T>(metodo: 'POST' | 'PATCH', caminho: string, corpo: unknown, f: Fetch): Promise<T> {
-	const resposta = await f(`${API}${caminho}`, {
+	const resposta = await requisitar(caminho, f, {
 		method: metodo,
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(corpo)
 	})
-	if (!resposta.ok) throw new Error(`HTTP ${resposta.status} ao enviar ${metodo} ${caminho}`)
 	return resposta.json() as Promise<T>
 }
 
@@ -65,9 +97,7 @@ export function atualizarTarefa(
 // Exclusão (Marco 5): DELETE apaga a tarefa na API.
 // O json-server devolve a tarefa apagada, mas a tela não precisa dela, por isso não retorna nada.
 export async function excluirTarefa(id: string, f: Fetch = fetch): Promise<void> {
-	const caminho = `/tarefas/${encodeURIComponent(id)}`
-	const resposta = await f(`${API}${caminho}`, { method: 'DELETE' })
-	if (!resposta.ok) throw new Error(`HTTP ${resposta.status} ao excluir ${caminho}`)
+	await requisitar(`/tarefas/${encodeURIComponent(id)}`, f, { method: 'DELETE' })
 }
 
 // ---------- Projetos ----------

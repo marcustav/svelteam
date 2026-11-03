@@ -3,6 +3,7 @@
     import type { Status, Prioridade } from '../../../tipos'
     import { goto } from '$app/navigation'
     import { excluirTarefa } from '../../../lib/api'
+    import { mensagemDeErro } from '../../../lib/erros'
 
     // data vem do retorno da função load em +page.ts
     let { data }: PageProps = $props()
@@ -20,16 +21,24 @@
     }
 
     async function confirmarExclusao() {
+        erro = ''
         excluindo = true
         try {
             await excluirTarefa(tarefa.id)
-            // volta para a lista; invalidateAll faz o load buscar as tarefas de novo, já sem a apagada
-            await goto('/', { invalidateAll: true })
-        } catch {
-            erro = 'Não foi possível excluir a tarefa. Tente de novo.'
+        } catch (e) {
+            // Falha ao excluir: o diálogo continua aberto, com o aviso dentro dele,
+            // para a pessoa tentar de novo ou cancelar sem perder o contexto. A tarefa continua intacta.
+            erro = mensagemDeErro(e, 'excluir')
             excluindo = false
-            dialogo?.close()
+            return
         }
+        // volta para a lista; invalidateAll faz o load buscar as tarefas de novo, já sem a apagada
+        await goto('/', { invalidateAll: true })
+    }
+
+    // Esc fecha o <dialog>; enquanto a exclusão está em andamento, não deixa fechar
+    function aoCancelar(evento: Event) {
+        if (excluindo) evento.preventDefault()
     }
 
     // O contrato guarda os valores sem acento; aqui só traduzimos para exibir.
@@ -70,19 +79,20 @@
         </div>
     </header>
 
-    {#if erro}
-        <p class="erro" role="alert">{erro}</p>
-    {/if}
-
-    <dialog bind:this={dialogo} aria-labelledby="titulo-excluir">
+    <dialog bind:this={dialogo} aria-labelledby="titulo-excluir" oncancel={aoCancelar}>
         <h2 id="titulo-excluir">Excluir tarefa?</h2>
         <p>A tarefa “{tarefa.titulo}” será apagada. Isso não pode ser desfeito.</p>
+
+        {#if erro}
+            <p class="erro" role="alert"><span aria-hidden="true">⚠</span> {erro}</p>
+        {/if}
+
         <div class="botoes">
             <button type="button" class="btn-cancelar" onclick={() => dialogo?.close()} disabled={excluindo}>
                 Cancelar
             </button>
             <button type="button" class="btn-excluir" onclick={confirmarExclusao} disabled={excluindo}>
-                {excluindo ? 'Excluindo...' : 'Excluir'}
+                {excluindo ? 'Excluindo...' : erro ? 'Tentar de novo' : 'Excluir'}
             </button>
         </div>
     </dialog>
@@ -201,6 +211,10 @@
     .erro {
         color: #b02a37;
         font-weight: 600;
+        padding: 0.6rem 0.8rem;
+        background: #fdecea;
+        border: 1px solid #c0392b;
+        border-radius: 4px;
     }
 
     dl {
@@ -214,4 +228,4 @@
     dd {
         margin: 0;
     }
-</style>
+</style>
