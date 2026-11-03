@@ -1,7 +1,7 @@
 // src/routes/tarefas/[id]/editar/+page.ts
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
-import { buscarTarefa, listarProjetos } from '$lib/api';
+import { buscarTarefa, listarProjetos } from '../../../../lib/api';
 
 export const load: PageLoad = async ({ params, fetch }) => {
 	// Busca a tarefa a editar e os projetos para o seletor em paralelo

@@ -1,8 +1,8 @@
 <!-- src/routes/tarefas/[id]/editar/+page.svelte -->
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import TarefaForm from '$lib/components/TarefaForm.svelte';
-	import { atualizarTarefa } from '$lib/api';
+	import TarefaForm from '../../../../lib/components/TarefaForm.svelte';
+	import { atualizarTarefa } from '../../../../lib/api';
 	import type { NovaTarefa } from '../../../../tipos';
 	import type { PageProps } from './$types';
 
