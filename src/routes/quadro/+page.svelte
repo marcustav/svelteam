@@ -6,8 +6,9 @@
 	import { atualizarTarefa } from '../../lib/api';
 	import TarefaCard from '../../lib/components/TarefaCard.svelte';
 	import AlternarVisao from '../../lib/components/AlternarVisao.svelte';
-	import { agruparPorStatus, filtrarTarefas, ROTULOS_STATUS } from '../../derivar';
-	import { filtros } from '../../lib/filtros.svelte';
+	import EstadoVazio from '../../lib/components/EstadoVazio.svelte';
+	import { agruparPorStatus, descreverFiltros, filtrarTarefas, ROTULOS_STATUS } from '../../derivar';
+	import { filtros, limparFiltros } from '../../lib/filtros.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -20,7 +21,11 @@
 	}
 
 	// Filtra pelo estado compartilhado e agrupa nas 4 colunas fixas de status
-	let colunas = $derived(agruparPorStatus(filtrarTarefas(tarefas, filtros)));
+	let tarefasFiltradas = $derived(filtrarTarefas(tarefas, filtros));
+	let colunas = $derived(agruparPorStatus(tarefasFiltradas));
+
+	// Texto do que está filtrado, usado na mensagem de "nada encontrado"
+	let filtrosAtivos = $derived(descreverFiltros(filtros));
 </script>
 
 <svelte:head>
@@ -35,26 +40,44 @@
 		<AlternarVisao />
 	</div>
 
-	<div class="quadro">
-		{#each colunas as coluna (coluna.status)}
-			<section class="coluna coluna-{coluna.status}" aria-labelledby="titulo-{coluna.status}">
-				<header class="cabecalho-coluna">
-					<h2 id="titulo-{coluna.status}">{ROTULOS_STATUS[coluna.status]}</h2>
-					<span class="contador" aria-label="{coluna.tarefas.length} tarefas">
-						{coluna.tarefas.length}
-					</span>
-				</header>
+	<!-- Estado vazio: em vez de quatro colunas vazias, uma mensagem só, com a saída certa -->
+	{#if tarefas.length === 0}
+		<EstadoVazio
+			titulo="Nenhuma tarefa cadastrada ainda."
+			mensagem="Crie a primeira tarefa para começar a organizar o trabalho da equipe."
+		>
+			<a href="/tarefas/nova">+ Nova tarefa</a>
+		</EstadoVazio>
+	{:else if tarefasFiltradas.length === 0}
+		<EstadoVazio
+			titulo="Nenhuma tarefa encontrada."
+			mensagem="Nenhuma tarefa corresponde a: {filtrosAtivos.join(' · ')}. Tente outros termos ou limpe os filtros."
+		>
+			<button type="button" onclick={limparFiltros}>Limpar filtros</button>
+		</EstadoVazio>
+	{:else}
+		<div class="quadro">
+			{#each colunas as coluna (coluna.status)}
+				<section class="coluna coluna-{coluna.status}" aria-labelledby="titulo-{coluna.status}">
+					<header class="cabecalho-coluna">
+						<h2 id="titulo-{coluna.status}">{ROTULOS_STATUS[coluna.status]}</h2>
+						<span class="contador" aria-label="{coluna.tarefas.length} tarefas">
+							{coluna.tarefas.length}
+						</span>
+					</header>
 
-				<div class="cartoes">
-					{#each coluna.tarefas as tarefa (tarefa.id)}
-						<TarefaCard {tarefa} aoMudarStatus={mudarStatus} />
-					{:else}
-						<p class="vazia">Nenhuma tarefa.</p>
-					{/each}
-				</div>
-			</section>
-		{/each}
-	</div>
+					<div class="cartoes">
+						<!-- coluna vazia com outras colunas cheias: aviso curto, dentro da própria coluna -->
+						{#each coluna.tarefas as tarefa (tarefa.id)}
+							<TarefaCard {tarefa} aoMudarStatus={mudarStatus} />
+						{:else}
+							<p class="vazia">Nenhuma tarefa neste status.</p>
+						{/each}
+					</div>
+				</section>
+			{/each}
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -146,4 +169,4 @@
 			grid-template-columns: 1fr;
 		}
 	}
-</style>
+</style>

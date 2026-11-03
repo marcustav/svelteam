@@ -1,116 +1,83 @@
-<!-- svelteam/marco-2/src/routes/+page.svelte -->
-
+<!-- src/routes/+page.svelte -->
 <script lang="ts">
+	import { untrack } from 'svelte';
+	import type { PageData } from './$types';
+	import type { Status } from '../tipos';
+	import { atualizarTarefa } from '../lib/api';
+	import TarefaCard from '../lib/components/TarefaCard.svelte';
+	import AlternarVisao from '../lib/components/AlternarVisao.svelte';
+	import EstadoVazio from '../lib/components/EstadoVazio.svelte';
+	import { filtros, limparFiltros } from '../lib/filtros.svelte';
+	import { descreverFiltros, filtrarTarefas } from '../derivar';
 
-    import { untrack } from 'svelte';
+	let { data }: { data: PageData } = $props();
 
-    import type { PageData } from './$types';
+	// copia local das tarefas, pra trocar so a que mudou sem recarregar tudo
+	let tarefas = $state(untrack(() => data.tarefas));
 
-    import type { Status } from '../tipos';
+	async function mudarStatus(id: string, status: Status) {
+		const nova = await atualizarTarefa(id, { status });
+		tarefas = tarefas.map((t) => (t.id === id ? nova : t));
+	}
 
-    import { atualizarTarefa } from '../lib/api';
+	// Aplica o filtro global reativamente na lista principal
+	let tarefasFiltradas = $derived(filtrarTarefas(tarefas, filtros));
 
-    import TarefaCard from '../lib/components/TarefaCard.svelte';
-
-    import AlternarVisao from '../lib/components/AlternarVisao.svelte';
-
-    import { filtros } from '../lib/filtros.svelte';
-
-    import { filtrarTarefas } from '../derivar';
-
-
-    let { data }: { data: PageData } = $props();
-
-
-    // copia local das tarefas, pra trocar so a que mudou sem recarregar tudo
-
-    let tarefas = $state(untrack(() => data.tarefas));
-
-
-    async function mudarStatus(id: string, status: Status) {
-
-        const nova = await atualizarTarefa(id, { status });
-
-        tarefas = tarefas.map((t) => (t.id === id ? nova : t));
-
-    }
-
-
-    // Aplica o filtro global reativamente na lista principal
-
-    let tarefasFiltradas = $derived(filtrarTarefas(tarefas, filtros));
-
+	// Texto do que está filtrado, usado na mensagem de "nada encontrado"
+	let filtrosAtivos = $derived(descreverFiltros(filtros));
 </script>
 
-
 <svelte:head>
-
-    <title>Lista de Tarefas</title>
-
+	<title>Lista de Tarefas</title>
 </svelte:head>
 
-
 <div class="pagina">
+	<h1>Minhas Tarefas</h1>
 
-    <h1>Minhas Tarefas</h1>
+	<!-- Alterna entre as duas visões das tarefas: Lista e Quadro -->
+	<div class="visao">
+		<AlternarVisao />
+	</div>
 
-
-    <!-- Alterna entre as duas visões das tarefas: Lista e Quadro -->
-
-    <div class="visao">
-
-        <AlternarVisao />
-
-    </div>
-
-
-    <div class="grid-tarefas">
-
-        {#each tarefasFiltradas as tarefa (tarefa.id)}
-
-            <TarefaCard {tarefa} aoMudarStatus={mudarStatus} />
-
-        {:else}
-
-            <p>Nenhuma tarefa encontrada com os filtros atuais.</p>
-
-        {/each}
-
-    </div>
-
+	<!-- Estado vazio: dois casos diferentes, cada um com a sua saída -->
+	{#if tarefas.length === 0}
+		<EstadoVazio
+			titulo="Nenhuma tarefa cadastrada ainda."
+			mensagem="Crie a primeira tarefa para começar a organizar o trabalho da equipe."
+		>
+			<a href="/tarefas/nova">+ Nova tarefa</a>
+		</EstadoVazio>
+	{:else if tarefasFiltradas.length === 0}
+		<EstadoVazio
+			titulo="Nenhuma tarefa encontrada."
+			mensagem="Nenhuma tarefa corresponde a: {filtrosAtivos.join(' · ')}. Tente outros termos ou limpe os filtros."
+		>
+			<button type="button" onclick={limparFiltros}>Limpar filtros</button>
+		</EstadoVazio>
+	{:else}
+		<div class="grid-tarefas">
+			{#each tarefasFiltradas as tarefa (tarefa.id)}
+				<TarefaCard {tarefa} aoMudarStatus={mudarStatus} />
+			{/each}
+		</div>
+	{/if}
 </div>
 
-
 <style>
+	h1 {
+		text-align: center;
+		color: #333;
+		margin-bottom: 2rem;
+	}
 
-    h1 {
+	.visao {
+		display: flex;
+		justify-content: center;
+	}
 
-        text-align: center;
-
-        color: #333;
-
-        margin-bottom: 2rem;
-
-    }
-
-
-    .visao {
-
-        display: flex;
-
-        justify-content: center;
-
-    }
-
-
-    .grid-tarefas {
-
-        display: grid;
-
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-
-        gap: 1.5rem;
-
-    }
-
+	.grid-tarefas {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		gap: 1.5rem;
+	}
 </style>

@@ -3,6 +3,7 @@
     import type { PageData } from './$types';
     import TarefaCard from '../../../lib/components/TarefaCard.svelte';
     import { formatarData } from '../../../lib/formatar';
+    import EstadoVazio from '../../../lib/components/EstadoVazio.svelte';
 
     let { data }: { data: PageData } = $props();
     // $derived: atualiza quando se navega de um projeto para outro
@@ -38,14 +39,22 @@
             </a>
         </div>
 
-        <div class="grid-tarefas">
-            <!-- Reaproveita o cartão do item 8 -->
-            {#each projeto.tarefas as tarefa (tarefa.id)}
-                <TarefaCard {tarefa} />
-            {:else}
-                <p>Este projeto ainda não tem tarefas.</p>
-            {/each}
-        </div>
+        {#if projeto.tarefas.length === 0}
+            <!-- Estado vazio: o projeto existe, mas ainda não tem tarefas -->
+            <EstadoVazio
+                titulo="Este projeto ainda não tem tarefas."
+                mensagem="Adicione a primeira tarefa de {projeto.nome} para acompanhar o andamento."
+            >
+                <a href="/tarefas/nova?projetoId={projeto.id}">+ Adicionar primeira tarefa</a>
+            </EstadoVazio>
+        {:else}
+            <div class="grid-tarefas">
+                <!-- Reaproveita o cartão do item 8 -->
+                {#each projeto.tarefas as tarefa (tarefa.id)}
+                    <TarefaCard {tarefa} />
+                {/each}
+            </div>
+        {/if}
     </section>
 
     <footer>
@@ -149,4 +158,4 @@
     .btn-voltar:hover {
         background-color: #7f8c8d;
     }
-</style>
+</style>

@@ -40,6 +40,17 @@ export function filtrarTarefas(tarefas: Tarefa[], f: Filtros): Tarefa[] {
 	)
 }
 
+// Descreve em texto o que está filtrado, para a mensagem de "nada encontrado".
+// Ex.: ['busca "relatório"', 'status Em revisão']. Lista vazia = nenhum filtro ativo.
+export function descreverFiltros(f: Filtros): string[] {
+	const partes: string[] = []
+	const termo = f.busca.trim()
+	if (termo) partes.push(`busca "${termo}"`)
+	if (f.status !== 'todos') partes.push(`status ${ROTULOS_STATUS[f.status]}`)
+	if (f.prioridade !== 'todas') partes.push(`prioridade ${ROTULOS_PRIORIDADE[f.prioridade].toLowerCase()}`)
+	return partes
+}
+
 // STATUS.map devolve sempre as quatro colunas, na mesma ordem, mesmo vazias
 // (o Object.groupBy só criaria coluna para status que tem tarefa).
 export function agruparPorStatus(tarefas: Tarefa[]): { status: Status; tarefas: Tarefa[] }[] {
