@@ -61,8 +61,8 @@
 				<section class="coluna coluna-{coluna.status}" aria-labelledby="titulo-{coluna.status}">
 					<header class="cabecalho-coluna">
 						<h2 id="titulo-{coluna.status}">{ROTULOS_STATUS[coluna.status]}</h2>
-						<span class="contador" aria-label="{coluna.tarefas.length} tarefas">
-							{coluna.tarefas.length}
+						<span class="contador">
+							{coluna.tarefas.length}<span class="so-leitor"> tarefas</span>
 						</span>
 					</header>
 
@@ -153,7 +153,7 @@
 
 	.vazia {
 		margin: 0.5rem 0;
-		color: #6b7280;
+		color: #4b5563;
 		font-size: 0.9rem;
 		text-align: center;
 	}
@@ -169,4 +169,4 @@
 			grid-template-columns: 1fr;
 		}
 	}
-</style>
+</style>

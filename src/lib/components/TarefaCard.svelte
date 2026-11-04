@@ -183,12 +183,12 @@
 	.mudar-status select {
 		font: inherit;
 		padding: 0.35rem 0.5rem;
-		border: 1px solid #b8bec9;
+		border: 1px solid #767676;
 		border-radius: 6px;
 		background: #fff;
 	}
 	.mudar-status select:focus-visible {
-		outline: 3px solid #f4d35e;
+		outline: 3px solid #1a3d8f;
 		outline-offset: 1px;
 	}
 	.erro {

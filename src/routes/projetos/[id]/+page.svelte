@@ -97,7 +97,7 @@
 
     .data-criacao {
         margin-top: 2rem;
-        color: #7f8c8d;
+        color: #566573;
         background-color: #f8f9fa;
         padding: 1rem;
         border-radius: 8px;
@@ -109,6 +109,8 @@
 
     /* Estilos novos para o cabeçalho das tarefas e botão */
     .cabecalho-tarefas {
+        flex-wrap: wrap;
+        gap: 0.75rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -121,7 +123,7 @@
     }
 
     .btn-nova-tarefa {
-        background-color: #0284c7; /* Azul combinando com a disciplina */
+        background-color: #0369a1; /* Azul combinando com a disciplina */
         color: white;
         text-decoration: none;
         padding: 0.5rem 1rem;
@@ -132,7 +134,7 @@
     }
 
     .btn-nova-tarefa:hover {
-        background-color: #0369a1;
+        background-color: #075985;
     }
 
     .grid-tarefas {
@@ -146,7 +148,7 @@
     }
 
     .btn-voltar {
-        background-color: #95a5a6;
+        background-color: #566573;
         color: white;
         text-decoration: none;
         padding: 0.75rem 1.5rem;
@@ -156,6 +158,6 @@
     }
 
     .btn-voltar:hover {
-        background-color: #7f8c8d;
+        background-color: #44505c;
     }
-</style>
+</style>

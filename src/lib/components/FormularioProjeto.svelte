@@ -169,7 +169,7 @@
 	input,
 	textarea {
 		padding: 0.6rem 0.75rem;
-		border: 1px solid #bdc3c7;
+		border: 1px solid #767676;
 		border-radius: 4px;
 		font: inherit;
 	}
@@ -177,7 +177,7 @@
 	input:focus-visible,
 	textarea:focus-visible,
 	button:focus-visible {
-		outline: 3px solid #7dc4ee;
+		outline: 3px solid #1a3d8f;
 		outline-offset: 2px;
 	}
 
@@ -212,7 +212,7 @@
 
 	button {
 		align-self: flex-start;
-		background-color: #0284c7;
+		background-color: #0369a1;
 		color: white;
 		border: none;
 		padding: 0.7rem 1.5rem;
@@ -223,7 +223,7 @@
 	}
 
 	button:hover:not(:disabled) {
-		background-color: #0369a1;
+		background-color: #075985;
 	}
 
 	button:disabled {

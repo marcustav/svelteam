@@ -55,6 +55,7 @@
 			<button type="button" onclick={limparFiltros}>Limpar filtros</button>
 		</EstadoVazio>
 	{:else}
+		<h2 class="so-leitor">Tarefas</h2>
 		<div class="grid-tarefas">
 			{#each tarefasFiltradas as tarefa (tarefa.id)}
 				<TarefaCard {tarefa} aoMudarStatus={mudarStatus} />

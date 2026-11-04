@@ -21,6 +21,8 @@
 	/>
 </svelte:head>
 
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
 <header>
 	<div>
 		<a class="marca" href="/">Svelteam</a>
@@ -34,7 +36,7 @@
 </header>
 
 <!-- folha de exercícios presa na lousa, com moldura de madeira -->
-<main>
+<main id="conteudo" tabindex="-1">
 	{#if carregando}
 		<div class="carregando" role="status" aria-live="polite">
 			<span class="indicador" aria-hidden="true"></span>
@@ -81,6 +83,36 @@
 	:global(:focus-visible) {
 		outline: 3px solid var(--giz-amarelo);
 		outline-offset: 3px;
+	}
+
+	/* texto so pra leitor de tela */
+	:global(.so-leitor) {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+	.pular {
+		position: absolute;
+		left: -999px;
+		top: 0.5rem;
+		z-index: 10;
+		padding: 0.6rem 1rem;
+		background: var(--giz-amarelo);
+		color: #1b1b1b;
+		font-weight: 600;
+	}
+	.pular:focus {
+		left: 0.5rem;
+	}
+	/* a folha e clara, o amarelo nao aparece nela: foco escuro */
+	main :global(:focus-visible) {
+		outline-color: #1a3d8f;
+	}
+	main:focus {
+		outline: none;
 	}
 
 	header {
@@ -215,6 +247,15 @@
 		main {
 			padding: 1.5rem 1rem;
 			border-width: 8px;
+		}
+		/* alvo de toque maior no celular */
+		main :global(button),
+		main :global(select),
+		main :global(input) {
+			min-height: 2.75rem;
+		}
+		nav a {
+			padding: 0.5rem 0;
 		}
 	}
 </style>

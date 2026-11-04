@@ -85,7 +85,7 @@
 
         padding: 0.5rem;
 
-        border: 1px solid #ccc;
+        border: 1px solid #767676;
 
         border-radius: 4px;
 

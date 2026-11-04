@@ -130,6 +130,8 @@
     }
     
     .cabecalho-acoes {
+        flex-wrap: wrap;
+        gap: 0.75rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -137,7 +139,7 @@
     }
 
     .btn-acao {
-        background-color: #007bff;
+        background-color: #0056b3;
         color: white;
         padding: 0.5rem 1rem;
         text-decoration: none;
@@ -148,10 +150,11 @@
     }
 
     .btn-acao:hover {
-        background-color: #0056b3;
+        background-color: #004085;
     }
 
     .botoes {
+        flex-wrap: wrap;
         display: flex;
         gap: 0.5rem;
     }
@@ -181,6 +184,7 @@
         border: none;
         border-radius: 8px;
         padding: 1.5rem;
+        width: calc(100% - 3rem);
         max-width: 24rem;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
@@ -228,4 +232,4 @@
     dd {
         margin: 0;
     }
-</style>
+</style>

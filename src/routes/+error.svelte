@@ -79,7 +79,7 @@
 	.btn-voltar,
 	.btn-tentar {
 		border: 0;
-		background-color: #3498db;
+		background-color: #1f6fa8;
 		color: white;
 		text-decoration: none;
 		padding: 0.75rem 1.5rem;
@@ -92,7 +92,7 @@
 
 	.btn-voltar:hover,
 	.btn-tentar:hover:not(:disabled) {
-		background-color: #2980b9;
+		background-color: #185a8a;
 	}
 
 	.btn-tentar:disabled {

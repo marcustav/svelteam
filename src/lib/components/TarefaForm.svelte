@@ -245,7 +245,7 @@
 	select {
 		font: inherit;
 		padding: 0.55rem 0.7rem;
-		border: 1px solid #b8bec9;
+		border: 1px solid #767676;
 		border-radius: 6px;
 		background: #fff;
 		color: inherit;
@@ -253,7 +253,7 @@
 	input:focus,
 	textarea:focus,
 	select:focus {
-		outline: 3px solid #f4d35e;
+		outline: 3px solid #1a3d8f;
 		outline-offset: 1px;
 		border-color: #2f4a3a;
 	}
@@ -304,7 +304,7 @@
 		cursor: pointer;
 	}
 	button:focus-visible {
-		outline: 3px solid #f4d35e;
+		outline: 3px solid #1a3d8f;
 		outline-offset: 2px;
 	}
 	button:hover:not(:disabled) {

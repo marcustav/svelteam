@@ -94,6 +94,8 @@
 	}
 
 	.rodape {
+		flex-wrap: wrap;
+		gap: 0.75rem;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -103,7 +105,7 @@
 	}
 
 	.btn-acessar {
-		background-color: #27ae60;
+		background-color: #1c7a43;
 		color: white;
 		text-decoration: none;
 		padding: 0.5rem 1rem;
@@ -113,7 +115,7 @@
 	}
 
 	.btn-acessar:hover {
-		background-color: #219150;
+		background-color: #15603a;
 	}
 
 	.acoes {
@@ -123,7 +125,7 @@
 	}
 
 	.btn-novo {
-		background-color: #0284c7;
+		background-color: #0369a1;
 		color: white;
 		text-decoration: none;
 		padding: 0.5rem 1rem;
@@ -134,6 +136,6 @@
 	}
 
 	.btn-novo:hover {
-		background-color: #0369a1;
+		background-color: #075985;
 	}
 </style>
