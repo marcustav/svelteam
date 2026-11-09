@@ -1,8 +1,11 @@
 import type { Projeto, Tarefa, NovaTarefa } from '../tipos'
 import { ErroApi } from './erros'
+import { PUBLIC_API_URL } from '$app/env/public'
 
-// Endereço da API local (json-server). No Marco 6 isso vai para uma variável de ambiente.
-const API = 'http://localhost:3000'
+// Marco 6: o endereço da API vem de variável de ambiente, e não fica mais escrito no código.
+// npm run dev   -> .env.development (API local)
+// npm run build -> .env.production  (API hospedada)
+const API = PUBLIC_API_URL
 
 // Se a API não responder nesse tempo, desistimos e avisamos o usuário
 // (sem isso, o botão ficaria em "Salvando..." para sempre).
