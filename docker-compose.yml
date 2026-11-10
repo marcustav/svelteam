@@ -14,11 +14,18 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=coolify
-      - traefik.http.routers.svelteam.rule=Host(`152.67.61.172.sslip.io`)
-      - traefik.http.routers.svelteam.entrypoints=https
-      - traefik.http.routers.svelteam.tls=true
-      - traefik.http.routers.svelteam.tls.certresolver=letsencrypt
-      - traefik.http.services.svelteam.loadbalancer.server.port=3000
+      # Roteador HTTPS
+      - traefik.http.routers.svelteam-frontend.rule=Host(`nvop8mxu7gq1xvmfaxhehu.152.67.61.172.sslip.io`) || Host(`152.67.61.172.sslip.io`)
+      - traefik.http.routers.svelteam-frontend.entrypoints=https
+      - traefik.http.routers.svelteam-frontend.tls=true
+      - traefik.http.routers.svelteam-frontend.tls.certresolver=letsencrypt
+      - traefik.http.routers.svelteam-frontend.service=svelteam-frontend
+      # Roteador HTTP
+      - traefik.http.routers.svelteam-frontend-http.rule=Host(`nvop8mxu7gq1xvmfaxhehu.152.67.61.172.sslip.io`) || Host(`152.67.61.172.sslip.io`)
+      - traefik.http.routers.svelteam-frontend-http.entrypoints=http
+      - traefik.http.routers.svelteam-frontend-http.service=svelteam-frontend
+      # Porta do container
+      - traefik.http.services.svelteam-frontend.loadbalancer.server.port=3000
 
   api:
     build:
@@ -44,10 +51,17 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=coolify
+      # Roteador HTTPS
       - traefik.http.routers.svelteam-api.rule=Host(`api.nvop8mxu7gq1xvmfaxhehu.152.67.61.172.sslip.io`)
       - traefik.http.routers.svelteam-api.entrypoints=https
       - traefik.http.routers.svelteam-api.tls=true
       - traefik.http.routers.svelteam-api.tls.certresolver=letsencrypt
+      - traefik.http.routers.svelteam-api.service=svelteam-api
+      # Roteador HTTP
+      - traefik.http.routers.svelteam-api-http.rule=Host(`api.nvop8mxu7gq1xvmfaxhehu.152.67.61.172.sslip.io`)
+      - traefik.http.routers.svelteam-api-http.entrypoints=http
+      - traefik.http.routers.svelteam-api-http.service=svelteam-api
+      # Porta do container
       - traefik.http.services.svelteam-api.loadbalancer.server.port=3001
 
 volumes:
