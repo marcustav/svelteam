@@ -1,17 +1,19 @@
-
 services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.frontend
     restart: unless-stopped
-    command: npm run dev -- --host 0.0.0.0
     environment:
       HOST: 0.0.0.0
       PORT: 3000
-      PUBLIC_API_URL: https://nvop8mxu7gq1xvmfaxhehu.152.67.61.172.sslip.io
+      PUBLIC_API_URL: https://api.nvop8mxu7gq1xvmfaxhehu.152.67.61.172.sslip.io
+    networks:
+      - coolify
+      - default
     labels:
       - traefik.enable=true
+      - traefik.docker.network=coolify
       - traefik.http.routers.svelteam.rule=Host(`152.67.61.172.sslip.io`)
       - traefik.http.routers.svelteam.entrypoints=https
       - traefik.http.routers.svelteam.tls=true
@@ -21,8 +23,10 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.api
     restart: unless-stopped
+    environment:
+      PORT: 3001
     command:
       - sh
       - -c
@@ -34,8 +38,12 @@ services:
         exec node /app/node_modules/json-server/lib/bin.js /data/db.json --host 0.0.0.0 --port 3001
     volumes:
       - svelteam-data:/data
+    networks:
+      - coolify
+      - default
     labels:
       - traefik.enable=true
+      - traefik.docker.network=coolify
       - traefik.http.routers.svelteam-api.rule=Host(`api.nvop8mxu7gq1xvmfaxhehu.152.67.61.172.sslip.io`)
       - traefik.http.routers.svelteam-api.entrypoints=https
       - traefik.http.routers.svelteam-api.tls=true
@@ -44,3 +52,7 @@ services:
 
 volumes:
   svelteam-data:
+
+networks:
+  coolify:
+    external: true

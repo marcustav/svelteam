@@ -7,7 +7,7 @@ node_modules
 .wrangler
 /.svelte-kit
 /build
-
+DEPLOY-COOLIFY.md
 # OS
 .DS_Store
 Thumbs.db

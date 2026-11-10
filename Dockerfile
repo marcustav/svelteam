@@ -17,10 +17,10 @@ ENV PORT=3000
 
 USER node
 VOLUME ["/data"]
-EXPOSE 3000
+EXPOSE 3000 3001
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-  CMD node -e "fetch('http://127.0.0.1:' + process.env.PORT + '/tarefas', {signal: AbortSignal.timeout(4000)}).then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+  CMD node -e "fetch('http://127.0.0.1:' + (process.env.PORT || 3000) + '/tarefas', {signal: AbortSignal.timeout(4000)}).then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
 
 # Inicializa o banco apenas quando o volume ainda não contém db.json.
 # exec permite que json-server receba os sinais de encerramento do container.
