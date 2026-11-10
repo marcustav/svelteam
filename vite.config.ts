@@ -3,6 +3,9 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+	server: {
+		allowedHosts: true
+	},
 	plugins: [
 		sveltekit({
 			// SvelteKit 3 removeu o alias $lib por padrão (ele usa #lib agora), mas o projeto
