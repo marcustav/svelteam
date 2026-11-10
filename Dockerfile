@@ -9,7 +9,8 @@ RUN npm ci --include=dev --ignore-scripts && npm cache clean --force
 
 # A semente fica fora do volume para não sobrescrever dados em novos deploys.
 COPY db.seed.json ./db.seed.json
-RUN mkdir -p /data && chown node:node /data
+# json-server verifica public ao iniciar em modo de produção, mesmo sem assets.
+RUN mkdir -p /app/public /data && chown node:node /data
 
 ENV NODE_ENV=production
 ENV PORT=3000
