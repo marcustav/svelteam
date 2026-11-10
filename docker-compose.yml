@@ -1,0 +1,46 @@
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: npm run dev -- --host 0.0.0.0
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+      PUBLIC_API_URL: https://nvop8mxu7gq1xvmfaxhehu.152.67.61.172.sslip.io
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.svelteam.rule=Host(`152.67.61.172.sslip.io`)
+      - traefik.http.routers.svelteam.entrypoints=https
+      - traefik.http.routers.svelteam.tls=true
+      - traefik.http.routers.svelteam.tls.certresolver=letsencrypt
+      - traefik.http.services.svelteam.loadbalancer.server.port=3000
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command:
+      - sh
+      - -c
+      - |
+        set -eu
+        if [ ! -f /data/db.json ]; then
+          cp /app/db.seed.json /data/db.json
+        fi
+        exec node /app/node_modules/json-server/lib/bin.js /data/db.json --host 0.0.0.0 --port 3001
+    volumes:
+      - svelteam-data:/data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.svelteam-api.rule=Host(`api.nvop8mxu7gq1xvmfaxhehu.152.67.61.172.sslip.io`)
+      - traefik.http.routers.svelteam-api.entrypoints=https
+      - traefik.http.routers.svelteam-api.tls=true
+      - traefik.http.routers.svelteam-api.tls.certresolver=letsencrypt
+      - traefik.http.services.svelteam-api.loadbalancer.server.port=3001
+
+volumes:
+  svelteam-data:
