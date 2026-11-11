@@ -4,6 +4,16 @@ Desenvolvimento Frontend · 2026.2 · Profª Marianne Lacerda Dutra Theodoro
 
 Framework: Svelte 5 (SvelteKit) com TypeScript
 
+## Aplicação publicada
+
+- Site: https://SEU-PROJETO.vercel.app
+- API (json-server): https://api.nvop8mxu7gq1xvmfaxhehu.152.67.61.172.sslip.io
+
+O site é estático (build do SvelteKit com `adapter-static`) e está hospedado na Vercel.
+O `vercel.json` manda qualquer rota que não seja arquivo (por exemplo `/tarefas/2`) para o
+`200.html`, e o roteador do SvelteKit abre a tela certa no navegador. Por isso recarregar uma
+rota interna não dá 404.
+
 ## Integrantes
 
 - Arthur Gabriel Monteiro Barreiras
