@@ -6,7 +6,7 @@ Framework: Svelte 5 (SvelteKit) com TypeScript
 
 ## Aplicação publicada
 
-- Site: https://SEU-PROJETO.vercel.app
+- Site: https://svelteam.vercel.app/
 - API (json-server): https://api.nvop8mxu7gq1xvmfaxhehu.152.67.61.172.sslip.io
 
 O site é estático (build do SvelteKit com `adapter-static`) e está hospedado na Vercel.
